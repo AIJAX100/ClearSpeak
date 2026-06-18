@@ -38,6 +38,9 @@ const audioUpload = document.querySelector("#audioUpload");
 let mediaRecorder;
 let audioChunks = [];
 let lastReport = null;
+let recognition;
+let recognitionBaseText = "";
+let recognitionFinalText = "";
 
 function normalizeText(text) {
   return text
@@ -166,6 +169,13 @@ function analyzeCurrentTranscript() {
 }
 
 async function toggleRecording() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (SpeechRecognition) {
+    toggleSpeechRecognition(SpeechRecognition);
+    return;
+  }
+
   if (mediaRecorder?.state === "recording") {
     mediaRecorder.stop();
     return;
@@ -194,6 +204,66 @@ async function toggleRecording() {
   } catch (error) {
     recordingStatus.textContent = "Microphone unavailable";
   }
+}
+
+function toggleSpeechRecognition(SpeechRecognition) {
+  if (recognition) {
+    recognition.stop();
+    return;
+  }
+
+  recognitionBaseText = transcriptInput.value.trim();
+  recognitionFinalText = "";
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = "en-US";
+
+  recognition.addEventListener("start", () => {
+    recordButton.classList.add("recording");
+    recordingStatus.textContent = "Listening...";
+    recordButton.setAttribute("aria-label", "Stop speech recognition");
+  });
+
+  recognition.addEventListener("result", (event) => {
+    let interimText = "";
+
+    for (let index = event.resultIndex; index < event.results.length; index += 1) {
+      const transcript = event.results[index][0].transcript;
+      if (event.results[index].isFinal) {
+        recognitionFinalText += `${transcript} `;
+      } else {
+        interimText += transcript;
+      }
+    }
+
+    transcriptInput.value = [recognitionBaseText, recognitionFinalText, interimText]
+      .filter(Boolean)
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+  });
+
+  recognition.addEventListener("end", () => {
+    recordButton.classList.remove("recording");
+    recordingStatus.textContent = transcriptInput.value.trim()
+      ? "Speech captured"
+      : "No speech captured";
+    recordButton.setAttribute("aria-label", "Start speech recognition");
+    recognition = null;
+    if (transcriptInput.value.trim()) {
+      analyzeCurrentTranscript();
+    }
+  });
+
+  recognition.addEventListener("error", (event) => {
+    const message = event.error === "not-allowed"
+      ? "Microphone permission blocked"
+      : "Speech recognition unavailable";
+    recordingStatus.textContent = message;
+  });
+
+  recognition.start();
 }
 
 function exportReport() {

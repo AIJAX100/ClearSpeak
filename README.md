@@ -14,6 +14,8 @@ Open `index.html` in a browser.
 
 Use **Try demo transcript** if microphone access is not available.
 
+The **Record** button uses the browser's built-in speech recognition when supported. It works best from the published HTTPS GitHub Pages link in a modern browser. If speech recognition is not supported, the app falls back to saving an audio recording preview and you can still test the analyzer with pasted text.
+
 ## Deploy With GitHub Pages
 
 1. Create a new GitHub repository.
