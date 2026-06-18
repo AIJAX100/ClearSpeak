@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ClearSpeak</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="ClearSpeak home">
+          <span class="brand-mark">C</span>
+          <span>ClearSpeak</span>
+        </a>
+        <nav class="nav-actions" aria-label="Primary">
+          <button type="button">History</button>
+          <button type="button">Settings</button>
+          <button type="button" id="exportButton">Export</button>
+        </nav>
+      </header>
+
+      <main class="workspace">
+        <section class="input-panel" aria-labelledby="inputTitle">
+          <div class="section-heading">
+            <h1 id="inputTitle">Speech Analyzer</h1>
+            <p>Record, upload, or paste a transcript to find filler words and weak phrases.</p>
+          </div>
+
+          <div class="recorder-box">
+            <div>
+              <span class="small-label">Session</span>
+              <strong id="recordingStatus">Ready to record</strong>
+            </div>
+            <button class="icon-button" id="recordButton" type="button" aria-label="Start recording">
+              <span id="recordIcon"></span>
+            </button>
+          </div>
+
+          <div class="no-mic-note">
+            No microphone access? Use the demo transcript below to test the analyzer.
+          </div>
+
+          <audio id="audioPlayback" controls hidden></audio>
+
+          <div class="file-row">
+            <label class="file-control">
+              <input id="audioUpload" type="file" accept="audio/*" />
+              <span>Upload audio</span>
+            </label>
+            <button class="ghost-button" id="sampleButton" type="button">Try demo transcript</button>
+          </div>
+
+          <label class="text-area-label" for="transcriptInput">Transcript</label>
+          <textarea
+            id="transcriptInput"
+            spellcheck="true"
+            placeholder="Paste a transcript here. Audio transcription API support can be added after the MVP."
+          ></textarea>
+
+          <div class="controls-row">
+            <button class="primary-button" id="analyzeButton" type="button">Analyze speech</button>
+            <button class="ghost-button" id="clearButton" type="button">Clear</button>
+          </div>
+        </section>
+
+        <section class="results-panel" aria-labelledby="resultsTitle">
+          <div class="results-header">
+            <div>
+              <span class="small-label">Current report</span>
+              <h2 id="resultsTitle">Clarity score</h2>
+            </div>
+            <div class="score-ring" aria-label="Speech clarity score">
+              <span id="scoreValue">--</span>
+              <small>/100</small>
+            </div>
+          </div>
+
+          <div class="metric-grid" aria-label="Speech metrics">
+            <article class="metric">
+              <span>Total fillers</span>
+              <strong id="totalFillers">0</strong>
+            </article>
+            <article class="metric">
+              <span>Words</span>
+              <strong id="wordCount">0</strong>
+            </article>
+            <article class="metric">
+              <span>Est. pace</span>
+              <strong id="paceValue">--</strong>
+            </article>
+            <article class="metric">
+              <span>Top habit</span>
+              <strong id="topHabit">--</strong>
+            </article>
+          </div>
+
+          <div class="analysis-grid">
+            <section class="analysis-section" aria-labelledby="fillersTitle">
+              <h3 id="fillersTitle">Filler breakdown</h3>
+              <div id="fillerList" class="filler-list empty-state">No transcript analyzed yet.</div>
+            </section>
+
+            <section class="analysis-section" aria-labelledby="tipsTitle">
+              <h3 id="tipsTitle">Coaching tips</h3>
+              <ul id="tipsList" class="tips-list">
+                <li>Paste a transcript or try the sample to generate coaching notes.</li>
+              </ul>
+            </section>
+          </div>
+
+          <section class="transcript-card" aria-labelledby="highlightTitle">
+            <div class="card-heading">
+              <h3 id="highlightTitle">Highlighted transcript</h3>
+              <span id="densityValue">0.0% filler density</span>
+            </div>
+            <p id="highlightedTranscript" class="highlighted-transcript">
+              Your analyzed transcript will appear here with filler words highlighted.
+            </p>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
