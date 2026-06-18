@@ -51,6 +51,17 @@ function normalizeText(text) {
     .trim();
 }
 
+function cleanRecognizedText(text) {
+  const trimmed = text.trim();
+  if (/^i'?m$/i.test(trimmed)) {
+    return "um";
+  }
+
+  return text
+    .replace(/\buhm\b/gi, "um")
+    .replace(/\bumm+\b/gi, "um");
+}
+
 function countOccurrences(text, phrase) {
   const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
   const matches = text.match(new RegExp(`\\b${escaped}\\b`, "gi"));
@@ -229,7 +240,7 @@ function toggleSpeechRecognition(SpeechRecognition) {
     let interimText = "";
 
     for (let index = event.resultIndex; index < event.results.length; index += 1) {
-      const transcript = event.results[index][0].transcript;
+      const transcript = cleanRecognizedText(event.results[index][0].transcript);
       if (event.results[index].isFinal) {
         recognitionFinalText += `${transcript} `;
       } else {
